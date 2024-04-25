@@ -5,10 +5,15 @@ from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import firestore
 
-def RealtimeSet(resultado):
+historial = []
 
-    cred = credentials.Certificate("bd.json")
-    firebase_admin.initialize_app(cred)
+def RealtimeSet(resultado):
+    try:
+        firebase_admin.get_app()  # Intenta obtener la aplicación existente
+    except ValueError:
+        # La aplicación aún no ha sido inicializada
+        cred = credentials.Certificate("bd.json")
+        firebase_admin.initialize_app(cred)
     
     # Get a reference to the Firestore database
     db = firestore.client()
@@ -18,9 +23,49 @@ def RealtimeSet(resultado):
     doc_ref.set({
         'resultado': resultado
     })
+    historial.append(resultado)
+
+def ver_historial():
+    historial_window = tk.Toplevel(ventana)
+    historial_window.title("Historial de Cálculos")
+    historial_window.geometry("300x200")
+
+    # Mostrar el historial local en la ventana
+    historial_text = "\n".join([str(i+1) + ". " + str(resultado) for i, resultado in enumerate(historial)])
+    historial_label = tk.Label(historial_window, text=historial_text)
+    historial_label.pack()
+
+    # Botón para borrar el historial
+    btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=lambda: (borrar_historial(), actualizar_historial_label(historial_window, historial_label)))
+    btn_borrar_historial.pack()
+
+def borrar_historial():
+    try:
+        firebase_admin.get_app()  # Intenta obtener la aplicación existente
+    except ValueError:
+        # La aplicación aún no ha sido inicializada
+        cred = credentials.Certificate("bd.json")
+        firebase_admin.initialize_app(cred)
+    
+    # Get a reference to the Firestore database
+    db = firestore.client()
+
+    # Delete all documents in the 'historial' collection
+    historial_ref = db.collection('historial')
+    docs = historial_ref.stream()
+    for doc in docs:
+        doc.reference.delete()
+
+    # Clear the local history
+    historial.clear()
+
+def actualizar_historial_label(historial_window, historial_label):
+    historial_text = "\n".join([str(i+1) + ". " + str(resultado) for i, resultado in enumerate(historial)])
+    historial_label.config(text=historial_text)
 
 
 def create_calculator_ui():
+    global ventana
     ventana = tk.Tk()
     ventana.configure(bg='white')  # Color de fondo blanco
     pantalla = tk.Entry(ventana, width=30, bd=7, justify="right")
@@ -62,7 +107,7 @@ def create_calculator_ui():
             pantalla.insert(tk.END, resultado)
             RealtimeSet(resultado)
         except Exception as e:
-            pantalla.insert(tk.END, "Error")
+            pantalla.insert(tk.END, )
 
     def mostrar_en_pantalla(valor):
         pantalla.insert(tk.END, valor)
@@ -83,7 +128,7 @@ def create_calculator_ui():
         ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
         ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
         (".", 4, 0), ("0", 4, 1), ("=", 4, 2), ("+", 4, 3),
-        ("x^n", 1, 5)
+        ("x^n", 1, 5), ("Historial", 6, 0)
     ]
 
     for (text, row, column) in botones:
@@ -91,12 +136,16 @@ def create_calculator_ui():
             btn = tk.Button(ventana, text=text, command=result, **boton_config)
         elif text in {"+", "-", "*", "/", "x^n"}:
             btn = tk.Button(ventana, text=text, command=lambda t=text: operar(t), **boton_config)
+        elif text == "Historial":
+            btn = tk.Button(ventana, text=text, command=ver_historial, **boton_config)
         else:
             btn = tk.Button(ventana, text=text, command=lambda t=text: mostrar_en_pantalla(t), **boton_config)
         btn.grid(row=row, column=column)
 
     borrar = tk.Button(ventana, text="Borrar", width=26, command=lambda: pantalla.delete(0, tk.END), bg="#FF5733", fg="#FFFFFF", bd=0)
     borrar.grid(row=5, column=0, columnspan=4)
+    
+
     
     import math
 
