@@ -1,2 +1,1 @@
-# Calculadora
-Calculadora Grafica
+# kalkulator
