@@ -71,7 +71,7 @@ def create_calculator_ui():
         historial_label = tk.Label(historial_window, text=historial_text)
         historial_label.pack()
 
-        btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=lambda: (calculadora.borrar_historial(), actualizar_historial_label(historial_window, historial_label)))
+        btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=lambda: (borrar_historial(), actualizar_historial_label(historial_window, historial_label)))
         btn_borrar_historial.pack()
 
     def actualizar_historial_label(historial_window, historial_label):
@@ -92,13 +92,13 @@ def create_calculator_ui():
         ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
         ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
         (".", 4, 0), ("0", 4, 1), ("=", 4, 2), ("+", 4, 3),
-        ("x^n", 1, 5), ("Historial", 6, 0), ("Graficar", 6, 5)
+        ("^", 1, 5), ("Historial", 6, 0), ("Graficar", 6, 5)
     ]
 
     for (text, row, column) in botones:
         if text == "=":
             btn = tk.Button(ventana, text=text, command=result, **boton_config)
-        elif text in {"+", "-", "*", "/", "x^n"}:
+        elif text in {"+", "-", "*", "/", "^"}:
             btn = tk.Button(ventana, text=text, command=lambda t=text: operacion(t), **boton_config)
         elif text == "Historial":
             btn = tk.Button(ventana, text=text, command=ver_historial, **boton_config)
@@ -115,15 +115,15 @@ def create_calculator_ui():
             resultado = func(valor)
             pantalla.delete(0, tk.END)
             pantalla.insert(tk.END, resultado)
-            calculadora.agregar_al_historial(resultado)
+            agregar_al_historial(resultado)
         except Exception as e:
             pantalla.insert(tk.END, "Error")
 
     botones_avanzados = [
-        ("√x", 2, 5, lambda: operacion_avanzada(calculadora.raiz_cuadrada)),
-        ("sin", 3, 5, lambda: operacion_avanzada(calculadora.seno)),
-        ("cos", 4, 5, lambda: operacion_avanzada(calculadora.coseno)),
-        ("tan", 5, 5, lambda: operacion_avanzada(calculadora.tangente))
+        ("√x", 2, 5, lambda: operacion_avanzada(raiz_cuadrada)),
+        ("sin", 3, 5, lambda: operacion_avanzada(seno)),
+        ("cos", 4, 5, lambda: operacion_avanzada(coseno)),
+        ("tan", 5, 5, lambda: operacion_avanzada(tangente))
     ]
 
     for (text, row, column, command) in botones_avanzados:

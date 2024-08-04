@@ -17,7 +17,7 @@ class CalculadoraModelView:
             resultado = resta(self.valor_a, valor_b)
         elif self.operacion == '*':
             resultado = multiplicacion(self.valor_a, valor_b)
-        elif self.operacion == 'x^n':
+        elif self.operacion == '^':
             resultado = potencia(self.valor_a, valor_b)
         elif self.operacion == '/':
             resultado = division(self.valor_a, valor_b)
