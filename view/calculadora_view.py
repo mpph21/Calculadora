@@ -39,7 +39,11 @@ def create_calculator_ui():
             pantalla.insert(tk.END, "Error")
 
     def mostrar_en_pantalla(valor):
-        pantalla.insert(tk.END, valor)
+        current_text = pantalla.get()
+        if current_text == "0" or current_text == "Error":
+            pantalla.delete(0, tk.END)
+        else:
+            pantalla.insert(tk.END, valor)
 
     def ver_historial():
         historial_window = tk.Toplevel(ventana)
@@ -58,6 +62,32 @@ def create_calculator_ui():
         historial = obtener_historial()
         historial_text = "\n".join([f"{i+1}. {resultado}" for i, resultado in enumerate(historial)])
         historial_label.config(text=historial_text)
+
+    def tecla_presionada(event):
+        key = event.keysym
+        if key in {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}:
+            mostrar_en_pantalla(key)
+        elif key == 'period':
+            mostrar_en_pantalla('.')
+        elif key == 'equal':
+            result()
+        elif key == 'plus':
+            operar('+')
+        elif key == 'minus':
+            operar('-')
+        elif key == 'asterisk':
+            operar('*')
+        elif key == 'slash':
+            operar('/')
+        elif key == 'Return':
+            result()
+        elif key == 'BackSpace':
+            current_text = pantalla.get()
+            pantalla.delete(len(current_text)-1, tk.END)
+        elif key == 'c':
+            pantalla.delete(0, tk.END)
+        elif key == 'h':
+            ver_historial()
 
     # Configuración de botones
     boton_config = {
@@ -111,5 +141,7 @@ def create_calculator_ui():
     for (text, row, column, command) in botones_avanzados:
         btn = tk.Button(ventana, text=text, command=command, **boton_config)
         btn.grid(row=row, column=column)
+    
+    ventana.bind('<Key>', tecla_presionada)
 
     ventana.mainloop()
