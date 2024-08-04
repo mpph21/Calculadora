@@ -8,8 +8,12 @@ def inicializar_firebase():
     try:
         firebase_admin.get_app()
     except ValueError:
-        cred = credentials.Certificate("bd.json")
-        firebase_admin.initialize_app(cred)
+        try:
+            cred = credentials.Certificate("C:\\Users\\tatia\\OneDrive\\Escritorio\\Calculadora\\model\\bd.json")
+            firebase_admin.initialize_app(cred)
+        except FileNotFoundError:
+            print("Error: El archivo 'bd.json' no se encuentra")
+            raise
 
 def agregar_al_historial(resultado):
     inicializar_firebase()
