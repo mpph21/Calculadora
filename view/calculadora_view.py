@@ -8,42 +8,58 @@ def create_calculator_ui():
     ventana.configure(bg='white')
     pantalla = tk.Entry(ventana, width=30, bd=7, justify="right")
     pantalla.grid(row=0, column=0, columnspan=10)
-    pantalla.insert(tk.END, 0)
-    
-    valor_a = 0
-    operacion = ""
+    pantalla.insert(tk.END, '0')
 
-    def operar(simbolo):
-        nonlocal valor_a, operacion
-        valor_a = float(pantalla.get())
-        pantalla.delete(0, tk.END)
-        operacion = simbolo
-
-    def result():
-        valor_b = float(pantalla.get())
-        pantalla.delete(0, tk.END)
-        try:
-            if operacion == '+':
-                resultado = suma(valor_a, valor_b)
-            elif operacion == '-':
-                resultado = resta(valor_a, valor_b)
-            elif operacion == '*':
-                resultado = multiplicacion(valor_a, valor_b)
-            elif operacion == 'x^n':
-                resultado = potencia(valor_a, valor_b)
-            elif operacion == '/':
-                resultado = division(valor_a, valor_b)
-            pantalla.insert(tk.END, resultado)
-            agregar_al_historial(resultado)
-        except Exception as e:
-            pantalla.insert(tk.END, "Error")
+    calculadora = CalculadoraModelView()
 
     def mostrar_en_pantalla(valor):
         current_text = pantalla.get()
-        if current_text == "0" or current_text == "Error":
+        if current_text == '0':
             pantalla.delete(0, tk.END)
-        else:
-            pantalla.insert(tk.END, valor)
+        pantalla.insert(tk.END, valor)
+
+    def operacion(simbolo):
+        calculadora.operacion = simbolo
+        calculadora.valor_a = float(pantalla.get())
+        pantalla.delete(0, tk.END)
+
+    def result():
+        valor_b = float(pantalla.get())
+        resultado = calculadora.resultado(valor_b)
+        pantalla.delete(0, tk.END)
+        pantalla.insert(tk.END, resultado)
+
+    def tecla_presionada(event):
+        key = event.keysym
+
+        if key in {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}:
+            mostrar_en_pantalla(key)
+        elif key == 'period':
+            if '.' not in pantalla.get():
+                mostrar_en_pantalla('.')
+        elif key == 'equal':
+            result()
+        elif key == 'plus':
+            operacion('+')
+        elif key == 'minus':
+            operacion('-')
+        elif key == 'asterisk':
+            operacion('*')
+        elif key == 'slash':
+            operacion('/')
+        elif key == 'Return':
+            result()
+        elif key == 'c':
+            pantalla.delete(0, tk.END)
+        elif key == 'h':
+            ver_historial()
+        elif key == 'BackSpace':
+            current_text = pantalla.get()
+            pantalla.delete(len(current_text)-1, tk.END)
+        elif key == 'Delete':
+            pantalla.delete(0, tk.END)
+
+    ventana.bind('<Key>', tecla_presionada)
 
     def ver_historial():
         historial_window = tk.Toplevel(ventana)
@@ -55,7 +71,7 @@ def create_calculator_ui():
         historial_label = tk.Label(historial_window, text=historial_text)
         historial_label.pack()
 
-        btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=lambda: (borrar_historial(), actualizar_historial_label(historial_window, historial_label)))
+        btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=lambda: (calculadora.borrar_historial(), actualizar_historial_label(historial_window, historial_label)))
         btn_borrar_historial.pack()
 
     def actualizar_historial_label(historial_window, historial_label):
@@ -63,33 +79,6 @@ def create_calculator_ui():
         historial_text = "\n".join([f"{i+1}. {resultado}" for i, resultado in enumerate(historial)])
         historial_label.config(text=historial_text)
 
-    def tecla_presionada(event):
-        key = event.keysym
-        if key in {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}:
-            mostrar_en_pantalla(key)
-        elif key == 'period':
-            mostrar_en_pantalla('.')
-        elif key == 'equal':
-            result()
-        elif key == 'plus':
-            operar('+')
-        elif key == 'minus':
-            operar('-')
-        elif key == 'asterisk':
-            operar('*')
-        elif key == 'slash':
-            operar('/')
-        elif key == 'Return':
-            result()
-        elif key == 'BackSpace':
-            current_text = pantalla.get()
-            pantalla.delete(len(current_text)-1, tk.END)
-        elif key == 'c':
-            pantalla.delete(0, tk.END)
-        elif key == 'h':
-            ver_historial()
-
-    # Configuración de botones
     boton_config = {
         "bg": "#E0E0E0",
         "activebackground": "#BDBDBD",
@@ -103,14 +92,14 @@ def create_calculator_ui():
         ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
         ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
         (".", 4, 0), ("0", 4, 1), ("=", 4, 2), ("+", 4, 3),
-        ("x^n", 1, 5), ("Historial", 6, 0)
+        ("x^n", 1, 5), ("Historial", 6, 0), ("Graficar", 6, 5)
     ]
 
     for (text, row, column) in botones:
         if text == "=":
             btn = tk.Button(ventana, text=text, command=result, **boton_config)
         elif text in {"+", "-", "*", "/", "x^n"}:
-            btn = tk.Button(ventana, text=text, command=lambda t=text: operar(t), **boton_config)
+            btn = tk.Button(ventana, text=text, command=lambda t=text: operacion(t), **boton_config)
         elif text == "Historial":
             btn = tk.Button(ventana, text=text, command=ver_historial, **boton_config)
         else:
@@ -120,28 +109,25 @@ def create_calculator_ui():
     borrar = tk.Button(ventana, text="Borrar", width=26, command=lambda: pantalla.delete(0, tk.END), bg="#FF5733", fg="#FFFFFF", bd=0)
     borrar.grid(row=5, column=0, columnspan=4)
 
-    # Botones para operaciones avanzadas
     def operacion_avanzada(func):
         try:
             valor = float(pantalla.get())
             resultado = func(valor)
             pantalla.delete(0, tk.END)
             pantalla.insert(tk.END, resultado)
-            agregar_al_historial(resultado)
+            calculadora.agregar_al_historial(resultado)
         except Exception as e:
             pantalla.insert(tk.END, "Error")
 
     botones_avanzados = [
-        ("√x", 2, 5, lambda: operacion_avanzada(raiz_cuadrada)),
-        ("sin", 3, 5, lambda: operacion_avanzada(seno)),
-        ("cos", 4, 5, lambda: operacion_avanzada(coseno)),
-        ("tan", 5, 5, lambda: operacion_avanzada(tangente))
+        ("√x", 2, 5, lambda: operacion_avanzada(calculadora.raiz_cuadrada)),
+        ("sin", 3, 5, lambda: operacion_avanzada(calculadora.seno)),
+        ("cos", 4, 5, lambda: operacion_avanzada(calculadora.coseno)),
+        ("tan", 5, 5, lambda: operacion_avanzada(calculadora.tangente))
     ]
 
     for (text, row, column, command) in botones_avanzados:
         btn = tk.Button(ventana, text=text, command=command, **boton_config)
         btn.grid(row=row, column=column)
-    
-    ventana.bind('<Key>', tecla_presionada)
 
     ventana.mainloop()
