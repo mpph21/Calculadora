@@ -1,4 +1,11 @@
-from view.calculadora_view import create_calculator_ui
+"""
+Archivo principal para iniciar la interfaz de usuario de la calculadora.
+"""
+
+from view.ventana_principal import create_calculator_ui
 
 if __name__ == "__main__":
-    create_calculator_ui()
+    try:
+        create_calculator_ui()
+    except Exception as e:
+        print(f"Error al iniciar la calculadora: {e}")
