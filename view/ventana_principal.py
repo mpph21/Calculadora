@@ -18,7 +18,7 @@ def create_calculator_ui():
     ventana.grid_rowconfigure(0, minsize=80)  # Fila de la pantalla
     ventana.grid_rowconfigure(1, minsize=60)
     ventana.grid_rowconfigure(2, minsize=60)
-    ventana.grid_rowconfigure(3, minsize=60)
+    ventana.grid_rowconfigure(3, minsize=60) #configura el tamaño minimo que peden tener los botones
     ventana.grid_rowconfigure(4, minsize=60)
     ventana.grid_rowconfigure(5, minsize=60)  # Fila para el botón de borrar
     ventana.grid_rowconfigure(6, minsize=60)
@@ -29,15 +29,15 @@ def create_calculator_ui():
     ventana.grid_columnconfigure(3, minsize=60)  # Columna para el cuarto botón
 
     
-    pantalla = tk.Entry(ventana, bd=7, justify="right")
+    pantalla = tk.Entry(ventana, bd=7, justify="right", font = ('Arial', 16))
     pantalla.grid(row=0, column=0, columnspan=6, sticky="nsew")
-    pantalla.insert(tk.END, '0')
+    pantalla.insert(tk.END, '0') #inicia la pantalla con un cero
 
     calculadora = CalculadoraModelView()
 
     def mostrar_en_pantalla(valor):
-        current_text = pantalla.get()
-        if current_text == '0':
+        textoActual = pantalla.get() #obtiene el texto actual en la pantalla
+        if textoActual == '0': #si es 0 lo borra y añade el valor
             pantalla.delete(0, tk.END)
         pantalla.insert(tk.END, valor)
 

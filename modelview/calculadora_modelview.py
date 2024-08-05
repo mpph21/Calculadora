@@ -1,18 +1,18 @@
 from model.funciones import (suma, resta, multiplicacion, division, potencia, raiz_cuadrada, seno, coseno, tangente)
 from model.historial import agregar_al_historial, obtener_historial, borrar_historial
 
-class CalculadoraModelView:
-    def __init__(self):
-        self.valor_a = 0
-        self.operacion = ""
+class CalculadoraModelView: #esta clase gestiona la logica de las operaciones y la interaccion con el historial
+    def __init__(self): #inicia la instancia de la clase, con dos atributos
+        self.valor_a = 0 #almacena el primer valor de la operacion
+        self.operacion = "" #almacena el simbolo de la operación
 
-    def operar(self, simbolo, valor_a):
-        self.valor_a = valor_a
-        self.operacion = simbolo
+    def operar(self, simbolo, valor_a): #método operar
+        self.valor_a = valor_a #atributo de la instancia self
+        self.operacion = simbolo #atributo de la instancia self
 
-    def resultado(self, valor_b):
+    def resultado(self, valor_b): #obtiene el simbolo guardado y lo opera según cual sea
         if self.operacion == '+':
-            resultado = suma(self.valor_a, valor_b)
+            resultado = suma(self.valor_a, valor_b) #llama a las funciones del model
         elif self.operacion == '-':
             resultado = resta(self.valor_a, valor_b)
         elif self.operacion == '*':
@@ -23,29 +23,24 @@ class CalculadoraModelView:
             resultado = division(self.valor_a, valor_b)
         else:
             resultado = "Error"
-        agregar_al_historial(resultado)
+        agregar_al_historial(resultado) #llama a la funcion para guardar el resultado
         return resultado
 
-    def operacion_avanzada(self, func, valor):
-        try:
-            resultado = func(valor)
-            agregar_al_historial(resultado)
-            return resultado
-        except Exception:
-            return "Error"
+
 
 class WindowManager:
     def __init__(self):
         self.windows = {}
 
     def open_window(self, window_name, window_func, *args, **kwargs):
-        if window_name not in self.windows or not self.windows[window_name].winfo_exists():
-            self.windows[window_name] = window_func(*args, **kwargs)
+        # Verifica si la ventana ya existe y está abierta
+        if window_name in self.windows and self.windows[window_name].winfo_exists():
+            self.windows[window_name].lift()  # Trae la ventana al frente
         else:
-            if self.windows[window_name] is None or not self.windows[window_name].winfo_exists():
-                self.windows[window_name] = window_func(*args, **kwargs)
-            else:
-                self.windows[window_name].lift()
+            # Crea una nueva ventana
+            self.windows[window_name] = window_func(*args, **kwargs)
+
         return self.windows[window_name]
     
+# Crear una instancia de WindowManager
 window_manager = WindowManager()

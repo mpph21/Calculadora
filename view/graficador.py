@@ -17,28 +17,29 @@ def abrir_ventana_graficar(ventana):
     frame_grafica.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
     # Crear figura y canvas para la gráfica
-    fig, ax = plt.subplots()
-    canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
-    canvas_widget = canvas.get_tk_widget()
+    fig, ax = plt.subplots() #Crea una figura y un conjunto de ejes para la gráfica.
+    canvas = FigureCanvasTkAgg(fig, master=frame_grafica) #Integra la figura de matplotlib en el Frame de Tkinter.
+    canvas_widget = canvas.get_tk_widget() #Inserta el canvas en el Frame y lo expande para llenar el espacio disponible.
     canvas_widget.pack(fill=tk.BOTH, expand=True)
 
     # Frame para entrada de parámetros
-    frame_parametros = tk.Frame(frame_grafica)
+    frame_parametros = tk.Frame(frame_grafica) #Un Frame que contiene los campos de entrada para los parámetros de las funciones.
     frame_parametros.pack(fill=tk.X, pady=10)
 
     def graficar_funcion(funcion, titulo, params=None):
-        ax.clear()
-        x = np.linspace(-10, 10, 400)
-        if params:
-            y = funcion(x, params)
+        ax.clear() #cada vez que se grafique una nueva función, la gráfica anterior se elimine y se pueda mostrar la nueva sin superposición.
+        x = np.linspace(-10, 10, 400) #Genera 400 puntos de datos en el rango de -10 a 10. Estos valores se utilizarán como coordenadas x para la gráfica.
+        if params: #Comprueba si se han proporcionado parámetros adicionales.
+            y = funcion(x, params) 
+            #Si se han proporcionado parámetros, la función se evalúa usando x y params. La funcion es una función lambda que toma x y params y devuelve los valores correspondientes de y.
         else:
-            y = funcion(x)
-        ax.plot(x, y)
-        ax.set_title(titulo)
-        ax.set_xlabel('x')
-        ax.set_ylabel('f(x)')
+            y = funcion(x) #Si no se proporcionan parámetros, la función se evalúa con solo x
+        ax.plot(x, y) #Dibuja una línea en el gráfico usando los valores x,y
+        ax.set_title(titulo) #Establece el título de la gráfica.
+        ax.set_xlabel('x') #Establece la etiqueta del eje x.
+        ax.set_ylabel('f(x)') #Establece la etiqueta del eje y.
         ax.grid(True)  # Añadir cuadrícula
-        canvas.draw()
+        canvas.draw() #Actualiza el gráfico en la interfaz de Tkinter para reflejar los cambios realizados.
 
     def mostrar_parametros(tipo_funcion):
         for widget in frame_parametros.winfo_children():
