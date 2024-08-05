@@ -9,26 +9,26 @@ def create_calculator_ui():
     ventana.configure(bg='white')
 
     # Configurar la expansión de las filas y columnas
-    for i in range(6):
+    for i in range(7):
         ventana.grid_rowconfigure(i, weight=1)
     for i in range(6):
         ventana.grid_columnconfigure(i, weight=1)
     
     # Ajustar el tamaño mínimo de las filas y columnas
-    ventana.grid_rowconfigure(0, minsize=70)  # Fila de la pantalla
+    ventana.grid_rowconfigure(0, minsize=80)  # Fila de la pantalla
     ventana.grid_rowconfigure(1, minsize=60)
     ventana.grid_rowconfigure(2, minsize=60)
     ventana.grid_rowconfigure(3, minsize=60)
     ventana.grid_rowconfigure(4, minsize=60)
     ventana.grid_rowconfigure(5, minsize=60)  # Fila para el botón de borrar
+    ventana.grid_rowconfigure(6, minsize=60)
 
     ventana.grid_columnconfigure(0, minsize=60)  # Columna para el primer botón
     ventana.grid_columnconfigure(1, minsize=60)  # Columna para el segundo botón
     ventana.grid_columnconfigure(2, minsize=60)  # Columna para el tercer botón
     ventana.grid_columnconfigure(3, minsize=60)  # Columna para el cuarto botón
-    ventana.grid_columnconfigure(4, minsize=60)  # Columna para el botón avanzado
-    ventana.grid_columnconfigure(5, minsize=60)  # Columna para el botón avanzado
 
+    
     pantalla = tk.Entry(ventana, bd=7, justify="right")
     pantalla.grid(row=0, column=0, columnspan=6, sticky="nsew")
     pantalla.insert(tk.END, '0')

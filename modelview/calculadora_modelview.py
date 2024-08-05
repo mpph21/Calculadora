@@ -33,3 +33,19 @@ class CalculadoraModelView:
             return resultado
         except Exception:
             return "Error"
+
+class WindowManager:
+    def __init__(self):
+        self.windows = {}
+
+    def open_window(self, window_name, window_func, *args, **kwargs):
+        if window_name not in self.windows or not self.windows[window_name].winfo_exists():
+            self.windows[window_name] = window_func(*args, **kwargs)
+        else:
+            if self.windows[window_name] is None or not self.windows[window_name].winfo_exists():
+                self.windows[window_name] = window_func(*args, **kwargs)
+            else:
+                self.windows[window_name].lift()
+        return self.windows[window_name]
+    
+window_manager = WindowManager()
