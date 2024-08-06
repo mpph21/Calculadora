@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from model.funciones_graficar import insertar_texto
 
 class ModernButton(tk.Button):
     def __init__(self, master, **kw):
@@ -40,3 +41,41 @@ def crear_pestana_botones(parent, entry, botones, color, filas, columnas, font=N
     for i in range(columnas):
         frame.grid_columnconfigure(i, weight=1)
     return frame
+
+# Definición de botones
+botones_basicos = [
+    ('7', lambda entry: insertar_texto(entry, '7')), ('8', lambda entry: insertar_texto(entry, '8')), 
+    ('9', lambda entry: insertar_texto(entry, '9')), ('+', lambda entry: insertar_texto(entry, '+')), 
+    ('/', lambda entry: insertar_texto(entry, '/')), ('4', lambda entry: insertar_texto(entry, '4')), 
+    ('5', lambda entry: insertar_texto(entry, '5')), ('6', lambda entry: insertar_texto(entry, '6')), 
+    ('-', lambda entry: insertar_texto(entry, '-')), ('*', lambda entry: insertar_texto(entry, '*')), 
+    ('1', lambda entry: insertar_texto(entry, '1')), ('2', lambda entry: insertar_texto(entry, '2')), 
+    ('3', lambda entry: insertar_texto(entry, '3')), ('=', lambda entry: insertar_texto(entry, '=')), 
+    ('^', lambda entry: insertar_texto(entry, '^')), ('0', lambda entry: insertar_texto(entry, '0')), 
+    ('.', lambda entry: insertar_texto(entry, '.')), ('(', lambda entry: insertar_texto(entry, '(')), 
+    (')', lambda entry: insertar_texto(entry, ')')), ('C', lambda entry: entry.delete(0, tk.END))
+]
+
+botones_trigo = [
+    ('sin', lambda entry: insertar_texto(entry, 'sin(')), ('cos', lambda entry: insertar_texto(entry, 'cos(')), 
+    ('tan', lambda entry: insertar_texto(entry, 'tan(')), ('asin', lambda entry: insertar_texto(entry, 'asin(')), 
+    ('acos', lambda entry: insertar_texto(entry, 'acos(')), ('atan', lambda entry: insertar_texto(entry, 'atan('))
+]
+
+botones_log = [
+    ('ln', lambda entry: insertar_texto(entry, 'ln(')), ('log', lambda entry: insertar_texto(entry, 'log(')), 
+    ('log2', lambda entry: insertar_texto(entry, 'log2(')), ('e', lambda entry: insertar_texto(entry, 'e')), 
+    ('10^', lambda entry: insertar_texto(entry, '10^')), ('exp', lambda entry: insertar_texto(entry, 'exp('))
+]
+
+botones_calculo = [
+    ('d/dx', lambda entry: insertar_texto(entry, 'd/dx(')), ('∫', lambda entry: insertar_texto(entry, '∫(')), 
+    ('lim', lambda entry: insertar_texto(entry, 'lim(')), ('sum', lambda entry: insertar_texto(entry, 'sum(')), 
+    ('prod', lambda entry: insertar_texto(entry, 'prod('))
+]
+
+botones_varios = [
+    ('|x|', lambda entry: insertar_texto(entry, 'abs(')), ('√', lambda entry: insertar_texto(entry, 'sqrt(')), 
+    ('∛', lambda entry: insertar_texto(entry, 'cbrt(')), ('π', lambda entry: insertar_texto(entry, 'pi')), 
+    ('%', lambda entry: insertar_texto(entry, '%')), ('mod', lambda entry: insertar_texto(entry, 'mod('))
+]

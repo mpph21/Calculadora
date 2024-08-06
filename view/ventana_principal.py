@@ -29,7 +29,7 @@ def create_calculator_ui():
     ventana.grid_columnconfigure(3, minsize=60)  # Columna para el cuarto botón
 
     
-    pantalla = tk.Entry(ventana, bd=7, justify="right", font = ('Arial', 16))
+    pantalla = tk.Entry(ventana, bg="white",justify="right", font = ('Arial', 16), highlightbackground="violet red", highlightcolor="violet red", highlightthickness=8)
     pantalla.grid(row=0, column=0, columnspan=6, sticky="nsew")
     pantalla.insert(tk.END, '0') #inicia la pantalla con un cero
 
