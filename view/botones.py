@@ -57,3 +57,4 @@ def crear_botones(ventana, pantalla, calculadora):
 
     borrar = tk.Button(ventana, text="Borrar", command=lambda: pantalla.delete(0, tk.END), bg="#FF5733", fg="#FFFFFF", bd=0)
     borrar.grid(row=5, column=0, columnspan=4, sticky="nsew")
+    
