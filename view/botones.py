@@ -1,7 +1,7 @@
 import tkinter as tk
 from model.funciones import *
 from view.historial_calculos import *
-from view.graficador import abrir_ventana_graficar
+from modelview.graficador import abrir_ventana_graficar
 from modelview.calculadora_modelview import CalculadoraModelView, window_manager
 from modelview.calculadora_modelview import window_manager
 
