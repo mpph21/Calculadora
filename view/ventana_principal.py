@@ -3,6 +3,7 @@ from view.botones import crear_botones
 from view.historial_calculos import ver_historial_calculos
 from view.funciones_avanzadas import agregar_funciones_avanzadas
 from modelview.calculadora_modelview import CalculadoraModelView
+from model.client_experience import confirmar_borrar_historial, mostrar_mensaje_error, mostrar_mensaje_info
 
 def create_calculator_ui():
     ventana = tk.Tk()
@@ -14,7 +15,6 @@ def create_calculator_ui():
         ventana.iconphoto(True, logo)
     except tk.TclError:
         print("No se pudo cargar el logo. Asegúrate de que la ruta del archivo es correcta y que el archivo está en un formato compatible.")
-
 
     # Configurar la expansión de las filas y columnas
     for i in range(7):
@@ -36,8 +36,7 @@ def create_calculator_ui():
     ventana.grid_columnconfigure(2, minsize=60)  # Columna para el tercer botón
     ventana.grid_columnconfigure(3, minsize=60)  # Columna para el cuarto botón
 
-    
-    pantalla = tk.Entry(ventana, bg="white",justify="right", font = ('Arial', 16), highlightbackground="violet red", highlightcolor="violet red", highlightthickness=8)
+    pantalla = tk.Entry(ventana, bg="white", justify="right", font=('Arial', 16), highlightbackground="violet red", highlightcolor="violet red", highlightthickness=8)
     pantalla.grid(row=0, column=0, columnspan=5, sticky="nsew")
     pantalla.insert(tk.END, '0') #inicia la pantalla con un cero
 
@@ -50,15 +49,22 @@ def create_calculator_ui():
         pantalla.insert(tk.END, valor)
 
     def operacion(simbolo):
-        calculadora.operacion = simbolo
-        calculadora.valor_a = float(pantalla.get())
-        pantalla.delete(0, tk.END)
+        try:
+            calculadora.operar(simbolo, float(pantalla.get()))
+            pantalla.delete(0, tk.END)
+        except ValueError:
+            mostrar_mensaje_error(ventana, "Entrada inválida. Por favor, introduce un número.")
 
     def result():
-        valor_b = float(pantalla.get())
-        resultado = calculadora.resultado(valor_b)
-        pantalla.delete(0, tk.END)
-        pantalla.insert(tk.END, resultado)
+        try:
+            valor_b = float(pantalla.get())
+            resultado = calculadora.resultado(valor_b)
+            pantalla.delete(0, tk.END)
+            pantalla.insert(tk.END, resultado)
+        except ValueError:
+            mostrar_mensaje_error(ventana, "Entrada inválida. Por favor, introduce un número.")
+        except ZeroDivisionError:
+            mostrar_mensaje_error(ventana, "División por cero no permitida.")
 
     def tecla_presionada(event):
         key = event.keysym
@@ -99,4 +105,3 @@ def create_calculator_ui():
     agregar_funciones_avanzadas(ventana, pantalla, calculadora)
 
     ventana.mainloop()
-

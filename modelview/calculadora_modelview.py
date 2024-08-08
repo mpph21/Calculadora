@@ -1,5 +1,7 @@
 from model.funciones import (suma, resta, multiplicacion, division, potencia, raiz_cuadrada, seno, coseno, tangente)
 from model.historial import agregar_al_historial, obtener_historial, borrar_historial
+from tkinter import messagebox
+from model.client_experience import confirmar_cierre_ventana
 
 class CalculadoraModelView: #esta clase gestiona la logica de las operaciones y la interaccion con el historial
     def __init__(self): #inicia la instancia de la clase, con dos atributos
@@ -26,8 +28,6 @@ class CalculadoraModelView: #esta clase gestiona la logica de las operaciones y 
         agregar_al_historial(resultado) #llama a la funcion para guardar el resultado
         return resultado
 
-
-
 class WindowManager:
     def __init__(self):
         self.windows = {}
@@ -41,6 +41,13 @@ class WindowManager:
             self.windows[window_name] = window_func(*args, **kwargs)
 
         return self.windows[window_name]
+
+    def close_window(self, window_name):
+        if window_name in self.windows and self.windows[window_name].winfo_exists():
+            if confirmar_cierre_ventana(self.windows[window_name]):
+                self.windows[window_name].destroy()
+                del self.windows[window_name]
     
 # Crear una instancia de WindowManager
 window_manager = WindowManager()
+

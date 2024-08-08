@@ -20,6 +20,7 @@ def agregar_funciones_avanzadas(ventana, pantalla, calculadora):
         ("cos", 3, 4, lambda: operacion_avanzada(coseno)),
         ("tan", 4, 4, lambda: operacion_avanzada(tangente))
     ]
+    
 
     for (text, row, column, command) in botones_avanzados:
         btn = tk.Button(ventana, text=text, command=command, bg="#E0E0E0", activebackground="#BDBDBD", width=4, bd=0, font=('Arial', 16))

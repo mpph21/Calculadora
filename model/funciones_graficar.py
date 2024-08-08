@@ -5,6 +5,10 @@ from matplotlib import pyplot as plt
 from tkinter import messagebox
 from model.client_experience import balancear_parentesis
 
+# Variable global para llevar la cuenta de los puntos
+num_puntos = 0
+puntos_agregados = []
+
 def insertar_texto(entry, texto):
     entry.insert(tk.END, texto)
     contenido = entry.get()
@@ -12,12 +16,31 @@ def insertar_texto(entry, texto):
     entry.delete(0, tk.END)
     entry.insert(0, contenido_balanceado)
 
+def on_click(event, ax, canvas, coordenadas_widget):
+    global num_puntos
+
+    if event.inaxes == ax:
+        if num_puntos < 10:
+            x, y = event.xdata, event.ydata
+            ax.plot(x, y, 'bo', markersize=5)
+            canvas.draw()
+
+            # Actualizar el widget de texto con las coordenadas
+            coordenadas_widget.config(state=tk.NORMAL)
+            coordenadas_widget.insert(tk.END, f"({x:.2f}, {y:.2f})\n")
+            coordenadas_widget.config(state=tk.DISABLED)
+
+            num_puntos += 1
+        else:
+            # Mostrar un mensaje de alerta si se ha alcanzado el límite de 10 puntos
+            tk.messagebox.showinfo("Límite alcanzado", "Se ha alcanzado el límite de 10 puntos.")
+
 def graficar_funcion(funcion_entry, ax, canvas, fig):
     ax.clear()
-    x_vals = np.linspace(-10, 10, 400)
+    x_vals = np.linspace(-10, 10, 400)  # Valores de x
     x, y = sp.symbols('x y')
     
-    funcion = funcion_entry.get()
+    funcion = funcion_entry.get()  # Obtener la función desde la entrada
     
     try:
         if funcion.startswith('integrate('):
@@ -26,12 +49,14 @@ def graficar_funcion(funcion_entry, ax, canvas, fig):
             F = sp.integrate(f, x)
             F_lambdified = sp.lambdify(x, F, modules=['numpy', 'sympy'])
             y_vals = F_lambdified(x_vals) - F_lambdified(0)
+        
         elif funcion.startswith('diff('):
             inner_func = funcion[funcion.index('(')+1:funcion.rindex(',')]
             f = sp.sympify(inner_func)
             df = sp.diff(f, x)
             df_lambdified = sp.lambdify(x, df, modules=['numpy', 'sympy'])
             y_vals = df_lambdified(x_vals)
+        
         elif funcion.startswith('limit('):
             # Para límites, graficamos la función original
             inner_func = funcion[funcion.index('(')+1:funcion.index(',')]
@@ -42,12 +67,14 @@ def graficar_funcion(funcion_entry, ax, canvas, fig):
             limit_point = sp.sympify(funcion[funcion.rindex(',')+1:funcion.rindex(')')])
             limit_value = sp.limit(f, x, limit_point)
             ax.plot(limit_point, limit_value, 'ro', markersize=10)  # Marcamos el punto del límite
+        
         else:
             if '=' in funcion and 'y' in funcion:
                 h, k, r = extraer_parametros_circulo(funcion)
                 graficar_circulo(h, k, r, ax, canvas, fig)
                 return
             else:
+                # Graficar polinomios
                 f = sp.sympify(funcion)
                 f_lambdified = sp.lambdify(x, f, modules=['numpy', 'sympy'])
                 y_vals = f_lambdified(x_vals)
@@ -64,7 +91,32 @@ def graficar_funcion(funcion_entry, ax, canvas, fig):
         ax.set_facecolor('white')
         canvas.draw()
     except (sp.SympifyError, TypeError, ValueError) as e:
+        # No hacer nada, se manejará el error en la función que llama a graficar_funcion
+        pass
+
+def graficar_funcion_boton(funcion_entry, ax, canvas, fig, coordenadas_widget):
+    try:
+        graficar_funcion(funcion_entry, ax, canvas, fig)
+    except (sp.SympifyError, TypeError, ValueError) as e:
+        # Mostrar un mensaje de error más amigable
         messagebox.showerror("Error", f"Error en la función: {e}")
+        print(f"Error en la función: {e}")  # Para depuración, asegura que se esté capturando la excepción
+        # Restablecer la gráfica y el widget de coordenadas a un estado conocido
+        ax.clear()
+        ax.set_title("Gráfica de la Función")
+        ax.set_xlabel('x')
+        ax.set_ylabel('f(x)')
+        ax.grid(True)
+        ax.axhline(y=0, color='black', linestyle='-', linewidth=1.5)
+        ax.axvline(x=0, color='black', linestyle='-', linewidth=1.5)
+        fig.patch.set_facecolor('white')
+        ax.set_facecolor('white')
+        canvas.draw()
+        # Limpiar el widget de texto de coordenadas
+        coordenadas_widget.config(state=tk.NORMAL)
+        coordenadas_widget.delete("1.0", tk.END)
+        coordenadas_widget.config(state=tk.DISABLED)
+
 
 def insertar_ecuacion_circulo(entry, h, k, r):
     ecuacion = f'(x-{h})**2 + (y-{k})**2 = {r}**2'

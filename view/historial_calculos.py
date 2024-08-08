@@ -1,5 +1,6 @@
 import tkinter as tk
 from model.historial import obtener_historial, borrar_historial
+from model.client_experience import confirmar_borrar_historial
 
 def ver_historial_calculos(ventana): #parametro ventana principal desde la cual se abrirá la nueva
     historial_window = tk.Toplevel(ventana) #crea una ventana secundaria superior
@@ -7,11 +8,11 @@ def ver_historial_calculos(ventana): #parametro ventana principal desde la cual 
     historial_window.geometry("300x200")
     historial_window.configure(bg='gray12')
 
-    historial_label = tk.Label(historial_window, text="", justify=tk.LEFT, bg="gray12", font=("Times New Roman", 12), fg="white" )
+    historial_label = tk.Label(historial_window, text="", justify=tk.LEFT, bg="gray12", font=("Times New Roman", 12), fg="white")
     historial_label.pack(expand=True, fill=tk.BOTH) #La etiqueta se expande para llenar el espacio disponible en la ventana y se ajusta
 
     def actualizar_historial_label():
-            # Obtiene el historial de cálculos
+        # Obtiene el historial de cálculos
         historial = obtener_historial()
         
         # Lista para almacenar cada línea del historial formateado
@@ -34,11 +35,14 @@ def ver_historial_calculos(ventana): #parametro ventana principal desde la cual 
         borrar_historial()
         actualizar_historial_label()
 
+    def confirmar_borrado():
+        if confirmar_borrar_historial(historial_window):
+            borrar_historial_y_actualizar()
+
     # Actualiza el historial al abrir la ventana
     actualizar_historial_label()
 
-    btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=borrar_historial_y_actualizar, bg="violet red", fg="gray1", bd=0, font= ("Times New Roman",16))
+    btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=confirmar_borrado, bg="violet red", fg="gray1", bd=0, font=("Times New Roman", 16))
     btn_borrar_historial.pack()
-
 
     return historial_window

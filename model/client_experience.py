@@ -1,3 +1,4 @@
+from tkinter import messagebox
 
 def balancear_parentesis(funcion):
     paren_abiertos = 0
@@ -23,3 +24,18 @@ def verificar_y_corregir_sintaxis(funcion):
     if funcion != funcion_corregida:
         return funcion_corregida, "Se han añadido o eliminado paréntesis para balancear la expresión."
     return funcion, None
+
+
+def confirmar_borrar_historial(parent_window):
+    respuesta = messagebox.askyesno("Confirmar Borrado", "¿Estás seguro de que quieres borrar el historial?", parent=parent_window)
+    return respuesta
+
+def mostrar_mensaje_error(parent_window, mensaje):
+    messagebox.showerror("Error", mensaje, parent=parent_window)
+
+def mostrar_mensaje_info(parent_window, mensaje):
+    messagebox.showinfo("Información", mensaje, parent=parent_window)
+
+def confirmar_cierre_ventana(parent_window):
+    respuesta = messagebox.askokcancel("Confirmar Cierre", "¿Estás seguro de que quieres cerrar esta ventana?", parent=parent_window)
+    return respuesta
