@@ -7,9 +7,9 @@ class ModernButton(tk.Button):
         tk.Button.__init__(self, master=master, **kw)
         self.config(
             relief=tk.FLAT,
-            bg="#2196F3",
+            bg="#D02090",  # violet red
             fg="white",
-            activebackground="#1976D2",
+            activebackground="#B01776",  # dark violet red
             activeforeground="white",
             highlightthickness=0,
             bd=0,
@@ -22,18 +22,18 @@ class ModernButton(tk.Button):
         self.config(text=self.cget("text").lower())
 
     def on_enter(self, e):
-        self['background'] = '#1976D2'
+        self['background'] = '#B01776'  # dark violet red
 
     def on_leave(self, e):
-        self['background'] = '#2196F3'
+        self['background'] = '#D02090'  # violet red
 
-def crear_boton(parent, entry, text, command, color='#2196F3', hover_color='#1976D2', font=None):
+def crear_boton(parent, entry, text, command, color='#D02090', hover_color='#B01776', font=None):
     btn = ModernButton(parent, text=text, command=lambda: command(entry), bg=color, activebackground=hover_color, font=font)
     btn.config(width=8, height=2)
     return btn
 
 def crear_pestana_botones(parent, entry, botones, color, filas, columnas, font=None):
-    frame = ttk.Frame(parent)
+    frame = ttk.Frame(parent, style="Dark.TFrame")
     for i, (texto, comando) in enumerate(botones):
         crear_boton(frame, entry, texto, comando, color, font=font).grid(row=i//columnas, column=i%columnas, padx=4, pady=4, sticky="nsew")
     for i in range(filas):
@@ -41,6 +41,7 @@ def crear_pestana_botones(parent, entry, botones, color, filas, columnas, font=N
     for i in range(columnas):
         frame.grid_columnconfigure(i, weight=1)
     return frame
+
 
 # Definición de botones
 botones_basicos = [

@@ -6,12 +6,20 @@ from modelview.calculadora_modelview import CalculadoraModelView
 
 def create_calculator_ui():
     ventana = tk.Tk()
-    ventana.configure(bg='white')
+    ventana.configure(bg='black')
+    ventana.title("Kalkulator")
+
+    try:
+        logo = tk.PhotoImage(file="kalkulatorRosa.png")  # Asegúrate de proporcionar la ruta correcta
+        ventana.iconphoto(True, logo)
+    except tk.TclError:
+        print("No se pudo cargar el logo. Asegúrate de que la ruta del archivo es correcta y que el archivo está en un formato compatible.")
+
 
     # Configurar la expansión de las filas y columnas
     for i in range(7):
         ventana.grid_rowconfigure(i, weight=1)
-    for i in range(6):
+    for i in range(5):
         ventana.grid_columnconfigure(i, weight=1)
     
     # Ajustar el tamaño mínimo de las filas y columnas
@@ -30,7 +38,7 @@ def create_calculator_ui():
 
     
     pantalla = tk.Entry(ventana, bg="white",justify="right", font = ('Arial', 16), highlightbackground="violet red", highlightcolor="violet red", highlightthickness=8)
-    pantalla.grid(row=0, column=0, columnspan=6, sticky="nsew")
+    pantalla.grid(row=0, column=0, columnspan=5, sticky="nsew")
     pantalla.insert(tk.END, '0') #inicia la pantalla con un cero
 
     calculadora = CalculadoraModelView()

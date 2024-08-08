@@ -15,10 +15,10 @@ def agregar_funciones_avanzadas(ventana, pantalla, calculadora):
             pantalla.insert(tk.END, "Error, asegurate de que sea un número")
 
     botones_avanzados = [ #cada boton está asociado con una funcion matematica avanzada del model
-        ("√x", 1, 5, lambda: operacion_avanzada(raiz_cuadrada)), #lambda son funciones anónimas
-        ("sin", 2, 5, lambda: operacion_avanzada(seno)), #al oprimir el boton se llama a operacion avanzada con el argumento seno
-        ("cos", 3, 5, lambda: operacion_avanzada(coseno)),
-        ("tan", 4, 5, lambda: operacion_avanzada(tangente))
+        ("√x", 1, 4, lambda: operacion_avanzada(raiz_cuadrada)), #lambda son funciones anónimas
+        ("sin", 2, 4, lambda: operacion_avanzada(seno)), #al oprimir el boton se llama a operacion avanzada con el argumento seno
+        ("cos", 3, 4, lambda: operacion_avanzada(coseno)),
+        ("tan", 4, 4, lambda: operacion_avanzada(tangente))
     ]
 
     for (text, row, column, command) in botones_avanzados:
