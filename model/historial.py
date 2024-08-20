@@ -31,6 +31,20 @@ def agregar_al_historial(calculo, resultado):
     historial.append((fecha, calculo, resultado))  # Guarda localmente el historial con fecha, cálculo y resultado
 
 def obtener_historial():
+    inicializar_firebase()
+    db = firestore.client()
+    historial_ref = db.collection('historial')
+    docs = historial_ref.stream()
+    
+    global historial
+    historial = []
+    for doc in docs:
+        data = doc.to_dict()
+        fecha = data.get('fecha', 'Fecha no disponible')
+        calculo = data.get('calculo', 'Cálculo no disponible')
+        resultado = data.get('resultado', 'Resultado no disponible')
+        historial.append((fecha, calculo, resultado))
+    
     return historial
 
 def borrar_historial():

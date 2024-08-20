@@ -80,4 +80,3 @@ botones_varios = [
     ('∛', lambda entry: insertar_texto(entry, 'cbrt(')), ('π', lambda entry: insertar_texto(entry, 'pi')), 
     ('%', lambda entry: insertar_texto(entry, '%')), ('mod', lambda entry: insertar_texto(entry, 'mod('))
 ]
-
