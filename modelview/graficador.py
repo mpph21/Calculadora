@@ -4,6 +4,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 import matplotlib.pyplot as plt
 from model.funciones_graficar import graficar_funcion, graficar_circulo, insertar_ecuacion_circulo, on_click, graficar_funcion_boton
 from view.botones_graficar import crear_pestana_botones, botones_basicos, botones_trigo, botones_log, botones_calculo, botones_varios, ModernButton
+from modelview.graficador_resistencias import crear_tab_resistencias
 
 def insertar_funcion(entry, funcion):
     entry.delete(0, tk.END)
@@ -80,9 +81,9 @@ def abrir_ventana_graficar(ventana):
     funciones_menu.add_command(label="Logaritmo Natural", command=lambda: [insertar_funcion(funcion_entry, "ln(x)"), mostrar_instrucciones("a, b, c", "ln(x)")])
     funciones_menu.add_command(label="Logaritmo Base 10", command=lambda: [insertar_funcion(funcion_entry, "log(x)"), mostrar_instrucciones("a, b, c", "log(x)")])
     funciones_menu.add_command(label="Exponencial", command=lambda: [insertar_funcion(funcion_entry, "exp(x)"), mostrar_instrucciones("a, b, c", "exp(x)")])
-    funciones_menu.add_command(label="Derivada", command=lambda: [insertar_funcion(funcion_entry, "diff(f(x), x)"), mostrar_instrucciones("a, b, c", "diff(f(x), x)")])
-    funciones_menu.add_command(label="Integral", command=lambda: [insertar_funcion(funcion_entry, "integrate(f(x), x)"), mostrar_instrucciones("a, b, c", "integrate(f(x), x)")])
-    funciones_menu.add_command(label="Límite", command=lambda: [insertar_funcion(funcion_entry, "limit(f(x), x, a)"), mostrar_instrucciones("a, b, c", "limit(f(x), x, a)")])
+    funciones_menu.add_command(label="Derivada", command=lambda: [insertar_funcion(funcion_entry, "diff(f(x), x)"), mostrar_instrucciones("f", "diff(f(x), x)")])
+    funciones_menu.add_command(label="Integral", command=lambda: [insertar_funcion(funcion_entry, "integrate(f(x), x)"), mostrar_instrucciones(" f", "integrate(f(x), x)")])
+    funciones_menu.add_command(label="Límite", command=lambda: [insertar_funcion(funcion_entry, "limit(f(x), x, a)"), mostrar_instrucciones("a, b, c, f", "limit(f(x), x, a)")])
     funciones_menu.add_command(label="Círculo", command=lambda: [insertar_ecuacion_circulo(funcion_entry, 0, 0, 5), mostrar_instrucciones("h, k, r", "(x - h)^2 + (y - k)^2 = r^2")])
     funciones_menu.add_command(label="Polinomio Lineal (ax + b)", command=lambda: [insertar_funcion(funcion_entry, "a*x + b"), mostrar_instrucciones("a, b", "a*x + b")])
     funciones_menu.add_command(label="Polinomio Cuadrático (ax^2 + bx + c)", command=lambda: [insertar_funcion(funcion_entry, "a*x**2 + b*x + c"), mostrar_instrucciones("a, b, c", "a*x**2 + b*x + c")])
@@ -97,6 +98,9 @@ def abrir_ventana_graficar(ventana):
     style.configure("TNotebook", background="#2E2E2E")
     style.configure("TNotebook.Tab", background="#4A4A4A", foreground="white")
     style.map("TNotebook.Tab", background=[("selected", "#2E2E2E")], foreground=[("selected", "white")])
+
+    tab_resistencias = crear_tab_resistencias(notebook)
+    notebook.add(tab_resistencias, text="Resistencias")
 
     tab_basico = crear_pestana_botones(notebook, funcion_entry, botones_basicos, '#D02090', 4, 5, font=button_font)
     notebook.add(tab_basico, text="Básico")

@@ -1,18 +1,18 @@
 import tkinter as tk
 from model.historial import obtener_historial, borrar_historial
 from model.client_experience import confirmar_borrar_historial
+from datetime import datetime
 
-def ver_historial_calculos(ventana): #parametro ventana principal desde la cual se abrirá la nueva
-    historial_window = tk.Toplevel(ventana) #crea una ventana secundaria superior
+def ver_historial_calculos(ventana):
+    historial_window = tk.Toplevel(ventana)
     historial_window.title("Historial de Cálculos")
-    historial_window.geometry("300x200")
+    historial_window.geometry("400x300")
     historial_window.configure(bg='gray12')
 
     historial_label = tk.Label(historial_window, text="", justify=tk.LEFT, bg="gray12", font=("Times New Roman", 12), fg="white")
-    historial_label.pack(expand=True, fill=tk.BOTH) #La etiqueta se expande para llenar el espacio disponible en la ventana y se ajusta
+    historial_label.pack(expand=True, fill=tk.BOTH)
 
     def actualizar_historial_label():
-        # Obtiene el historial de cálculos
         historial = obtener_historial()
         
         # Lista para almacenar cada línea del historial formateado
@@ -21,7 +21,8 @@ def ver_historial_calculos(ventana): #parametro ventana principal desde la cual 
         # Itera sobre el historial con sus índices
         for i, resultado in enumerate(historial):
             # Formatea la cadena para cada resultado
-            linea_form = f"{i+1}. {resultado}"
+            fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Fecha actual para mostrar
+            linea_form = f"{i+1}. Fecha: {fecha}\nResultado: {resultado}\n"
             # Añade la cadena formateada a la lista
             lineasDeHistorial.append(linea_form)
         
@@ -43,6 +44,6 @@ def ver_historial_calculos(ventana): #parametro ventana principal desde la cual 
     actualizar_historial_label()
 
     btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=confirmar_borrado, bg="violet red", fg="gray1", bd=0, font=("Times New Roman", 16))
-    btn_borrar_historial.pack()
+    btn_borrar_historial.pack(pady=10)
 
     return historial_window

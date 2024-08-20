@@ -1,9 +1,10 @@
 import tkinter as tk
 from model.funciones import *
-from view.historial_calculos import *
+from modelview.historial_calculos import *
 from modelview.graficador import abrir_ventana_graficar
-from modelview.calculadora_modelview import CalculadoraModelView, window_manager
-from modelview.calculadora_modelview import window_manager
+from modelview.calculadora_modelview import CalculadoraModelView
+from modelview.manejarVentana import window_manager
+
 
 background_color = "#222222"
 button_color = "#333333"

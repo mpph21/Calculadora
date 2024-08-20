@@ -1,6 +1,6 @@
 import tkinter as tk
 from view.botones import crear_botones
-from view.historial_calculos import ver_historial_calculos
+from modelview.historial_calculos import ver_historial_calculos
 from view.funciones_avanzadas import agregar_funciones_avanzadas
 from modelview.calculadora_modelview import CalculadoraModelView
 from model.client_experience import confirmar_borrar_historial, mostrar_mensaje_error, mostrar_mensaje_info
