@@ -1,7 +1,6 @@
 import tkinter as tk
 from model.historial import obtener_historial, borrar_historial
 from model.client_experience import confirmar_borrar_historial
-from datetime import datetime
 
 def ver_historial_calculos(ventana):
     historial_window = tk.Toplevel(ventana)
@@ -14,22 +13,15 @@ def ver_historial_calculos(ventana):
 
     def actualizar_historial_label():
         historial = obtener_historial()
-        
-        # Lista para almacenar cada línea del historial formateado
+
         lineasDeHistorial = []
 
-        # Itera sobre el historial con sus índices
-        for i, resultado in enumerate(historial):
-            # Formatea la cadena para cada resultado
-            fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Fecha actual para mostrar
-            linea_form = f"{i+1}. Fecha: {fecha}\nResultado: {resultado}\n"
-            # Añade la cadena formateada a la lista
+        for i, (fecha, calculo, resultado) in enumerate(historial):
+            linea_form = f"{i+1}. Fecha: {fecha}\nCálculo: {calculo}\nResultado: {resultado}\n"
             lineasDeHistorial.append(linea_form)
         
-        # Une todas las líneas con saltos de línea
         historial_text = "\n".join(lineasDeHistorial)
         
-        # Actualiza la etiqueta con el texto del historial
         historial_label.config(text=historial_text)
 
     def borrar_historial_y_actualizar():
@@ -40,7 +32,6 @@ def ver_historial_calculos(ventana):
         if confirmar_borrar_historial(historial_window):
             borrar_historial_y_actualizar()
 
-    # Actualiza el historial al abrir la ventana
     actualizar_historial_label()
 
     btn_borrar_historial = tk.Button(historial_window, text="Borrar Historial", command=confirmar_borrado, bg="violet red", fg="gray1", bd=0, font=("Times New Roman", 16))
