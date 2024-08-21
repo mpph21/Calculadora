@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, font, Menu, messagebox
-from PIL import Image, ImageTk  # Importa PIL para manejar la imagen
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 from model.funciones_graficar import graficar_funcion_boton, insertar_ecuacion_circulo, on_click
@@ -26,22 +25,9 @@ def abrir_ventana_graficar(ventana):
     frame_grafica = tk.Frame(ventana_graficar, bg='#2E2E2E')
     frame_grafica.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-    # Frame para la entrada, imagen y controles
+    # Frame para la entrada y controles
     frame_entrada = tk.Frame(ventana_graficar, bg='#2E2E2E')
     frame_entrada.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-    # Nuevo frame para la imagen
-    frame_imagen = tk.Frame(frame_entrada, bg='#2E2E2E')
-    frame_imagen.grid(row=0, column=1, padx=5, pady=5, sticky='ns')
-
-    # Redimensionar la imagen
-    imagen = Image.open("errorRosa.png")  # Cambia esta ruta por la ubicación de tu imagen
-    imagen_redimensionada = imagen.resize((100, 100))  # Cambia las dimensiones según necesites
-    imagen_tk = ImageTk.PhotoImage(imagen_redimensionada)
-    
-    label_imagen = tk.Label(frame_imagen, image=imagen_tk, bg='#2E2E2E')
-    label_imagen.image = imagen_tk  # Necesario para que la imagen no se elimine por el garbage collector
-    label_imagen.pack()
 
     # Crear figura y ejes para la gráfica
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -103,19 +89,16 @@ def abrir_ventana_graficar(ventana):
     funciones_menu.add_command(label="Polinomio Lineal (ax + b)", command=lambda: [insertar_funcion(funcion_entry, "a*x + b"), mostrar_instrucciones("a, b", "a*x + b")])
     funciones_menu.add_command(label="Polinomio Cuadrático (ax^2 + bx + c)", command=lambda: [insertar_funcion(funcion_entry, "a*x**2 + b*x + c"), mostrar_instrucciones("a, b, c", "a*x**2 + b*x + c")])
     funciones_menu.add_command(label="Polinomio Cúbico (ax^3 + bx^2 + cx + d)", command=lambda: [insertar_funcion(funcion_entry, "a*x**3 + b*x**2 + c*x + d"), mostrar_instrucciones("a, b, c, d", "a*x**3 + b*x**2 + c*x + d")])
-    funciones_menu.add_command(label="Polinomio de Grado n", command=lambda: [insertar_funcion(funcion_entry, "a*x**n + b*x**(n-1) + ... + c"), mostrar_instrucciones("a, b, c, ..., n", "a*x**n + b*x**(n-1) + ... + c")])
 
-    # Añadir pestañas a la ventana
-    notebook = ttk.Notebook(ventana_graficar)
-    notebook.pack(fill=tk.BOTH, expand=True)
+    # Crear las pestañas de botones
+    notebook = ttk.Notebook(frame_entrada)
+    notebook.grid(row=3, column=0, padx=5, pady=(10, 5), sticky='nsew')
 
     style = ttk.Style()
+    style.theme_use("clam")
     style.configure("TNotebook", background="#2E2E2E")
     style.configure("TNotebook.Tab", background="#4A4A4A", foreground="white")
     style.map("TNotebook.Tab", background=[("selected", "#2E2E2E")], foreground=[("selected", "white")])
-
-    tab_resistencias = crear_tab_resistencias(notebook)
-    notebook.add(tab_resistencias, text="Resistencias")
 
     tab_basico = crear_pestana_botones(notebook, funcion_entry, botones_basicos, '#D02090', 4, 5, font=button_font)
     notebook.add(tab_basico, text="Básico")
@@ -131,6 +114,10 @@ def abrir_ventana_graficar(ventana):
 
     tab_varios = crear_pestana_botones(notebook, funcion_entry, botones_varios, '#D02090', 2, 3, font=button_font)
     notebook.add(tab_varios, text="Varios")
+
+    tab_resistencias = crear_tab_resistencias(notebook)
+    notebook.add(tab_resistencias, text="Resistencias")
+
 
     # Ajustar el grid
     frame_entrada.grid_rowconfigure(3, weight=1)
