@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, font, Menu, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
-from model.funciones_graficar import graficar_funcion_boton, insertar_ecuacion_circulo, on_click
+from model.funciones_graficar import graficar_funcion_boton, insertar_ecuacion_circulo, on_click, graficar_funcion
 from view.botones_graficar import crear_pestana_botones, botones_basicos, botones_trigo, botones_log, botones_calculo, botones_varios, ModernButton
 from modelview.graficador_resistencias import crear_tab_resistencias
 from modelview.manejarVentana import window_manager
@@ -14,6 +14,7 @@ def insertar_funcion(entry, funcion):
 def mostrar_instrucciones(terminos, funcion):
     messagebox.showinfo("Instrucciones",
                        f"Cambia los siguientes términos:\n{terminos}\nen la función: {funcion}")
+
 
 def abrir_ventana_graficar(ventana):
     ventana_graficar = tk.Toplevel(ventana)
@@ -40,7 +41,7 @@ def abrir_ventana_graficar(ventana):
     toolbar.update()
     canvas_widget.pack(fill=tk.BOTH, expand=True)
 
-    # Nuevo frame para las coordenadas
+    # Nuevo frame para las coordenadas y botones adicionales
     frame_coordenadas = tk.Frame(ventana_graficar, bg='#2E2E2E')
     frame_coordenadas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=False, padx=10, pady=10)
 
@@ -68,6 +69,12 @@ def abrir_ventana_graficar(ventana):
     # Botón para graficar la función
     ModernButton(frame_entrada, text="Graficar Función", command=lambda: graficar_funcion_boton(funcion_entry, ax, canvas, fig, coordenadas_widget), font=button_font).grid(row=2, column=0, padx=5, pady=(0, 10), sticky='ew')
 
+    # Botón para subir gráfica a la base de datos
+    #ModernButton(frame_coordenadas, text="Subir Gráfica a Base de Datos", font=button_font, command=lambda: subir_grafica_base_datos()).pack(pady=10)
+
+    # Botón para borrar puntos
+    ModernButton(frame_coordenadas, text="Borrar Puntos", font=button_font, command=lambda: coordenadas_widget.delete('1.0', tk.END)).pack(pady=10)
+
     # Configuración del menú
     menu_bar = Menu(ventana_graficar)
     ventana_graficar.config(menu=menu_bar)
@@ -75,21 +82,109 @@ def abrir_ventana_graficar(ventana):
     funciones_menu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Funciones", menu=funciones_menu)
 
-    # Opciones del menú de funciones
-    funciones_menu.add_command(label="Seno", command=lambda: [insertar_funcion(funcion_entry, "sin(x)"), mostrar_instrucciones("a, b, c", "sin(x)")])
-    funciones_menu.add_command(label="Coseno", command=lambda: [insertar_funcion(funcion_entry, "cos(x)"), mostrar_instrucciones("a, b, c", "cos(x)")])
-    funciones_menu.add_command(label="Tangente", command=lambda: [insertar_funcion(funcion_entry, "tan(x)"), mostrar_instrucciones("a, b, c", "tan(x)")])
-    funciones_menu.add_command(label="Logaritmo Natural", command=lambda: [insertar_funcion(funcion_entry, "ln(x)"), mostrar_instrucciones("a, b, c", "ln(x)")])
-    funciones_menu.add_command(label="Logaritmo Base 10", command=lambda: [insertar_funcion(funcion_entry, "log(x)"), mostrar_instrucciones("a, b, c", "log(x)")])
-    funciones_menu.add_command(label="Exponencial", command=lambda: [insertar_funcion(funcion_entry, "exp(x)"), mostrar_instrucciones("a, b, c", "exp(x)")])
-    funciones_menu.add_command(label="Derivada", command=lambda: [insertar_funcion(funcion_entry, "diff(f(x), x)"), mostrar_instrucciones("f", "diff(f(x), x)")])
-    funciones_menu.add_command(label="Integral", command=lambda: [insertar_funcion(funcion_entry, "integrate(f(x), x)"), mostrar_instrucciones(" f", "integrate(f(x), x)")])
-    funciones_menu.add_command(label="Límite", command=lambda: [insertar_funcion(funcion_entry, "limit(f(x), x, a)"), mostrar_instrucciones("a, b, c, f", "limit(f(x), x, a)")])
-    funciones_menu.add_command(label="Círculo", command=lambda: [insertar_ecuacion_circulo(funcion_entry, 0, 0, 5), mostrar_instrucciones("h, k, r", "(x - h)^2 + (y - k)^2 = r^2")])
-    funciones_menu.add_command(label="Polinomio Lineal (ax + b)", command=lambda: [insertar_funcion(funcion_entry, "a*x + b"), mostrar_instrucciones("a, b", "a*x + b")])
-    funciones_menu.add_command(label="Polinomio Cuadrático (ax^2 + bx + c)", command=lambda: [insertar_funcion(funcion_entry, "a*x**2 + b*x + c"), mostrar_instrucciones("a, b, c", "a*x**2 + b*x + c")])
-    funciones_menu.add_command(label="Polinomio Cúbico (ax^3 + bx^2 + cx + d)", command=lambda: [insertar_funcion(funcion_entry, "a*x**3 + b*x**2 + c*x + d"), mostrar_instrucciones("a, b, c, d", "a*x**3 + b*x**2 + c*x + d")])
+    funciones_menu.add_command(
+        label="Seno",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "sin(x)"),
+            mostrar_instrucciones("x", "sin(x): El seno de x, donde x está en radianes.")
+        ]
+    )
 
+    funciones_menu.add_command(
+        label="Coseno",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "cos(x)"),
+            mostrar_instrucciones("x", "cos(x): El coseno de x, donde x está en radianes.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Tangente",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "tan(x)"),
+            mostrar_instrucciones("x", "tan(x): La tangente de x, donde x está en radianes.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Logaritmo Natural",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "log(x)"),
+            mostrar_instrucciones("x", "log(x): Logaritmo natural de x. x debe ser positivo.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Logaritmo Base 10",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "log(x, 10)"),
+            mostrar_instrucciones("x", "log(x, 10): Logaritmo de x en base 10. x debe ser positivo.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Exponencial",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "exp(x)"),
+            mostrar_instrucciones("x", "exp(x): Exponencial de x, es decir, e^x.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Derivada",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "diff(f(x), x)"),
+            mostrar_instrucciones("f(x)", "diff(f(x), x): Derivada de f(x) con respecto a x. Reemplaza f(x) con tu función.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Integral",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "integrate(f(x), x)"),
+            mostrar_instrucciones("f(x)", "integrate(f(x), x): Integral de f(x) con respecto a x. Reemplaza f(x) con tu función.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Límite",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "limit(f(x), x, a)"),
+            mostrar_instrucciones("f(x), a", "limit(f(x), x, a): Límite de f(x) cuando x tiende a a. Reemplaza f(x) con tu función y a con el valor.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Círculo",
+        command=lambda: [
+            insertar_ecuacion_circulo(funcion_entry, 0, 0, 5),
+            mostrar_instrucciones("0, 0, 5", "(x - h)^2 + (y - k)^2 = r^2: Ecuación de un círculo con centro en (h, k) y radio r. Reemplaza h, k y r con los valores.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Polinomio Lineal (ax + b)",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "a*x + b"),
+            mostrar_instrucciones("a, b", "a*x + b: Polinomio lineal donde a es la pendiente y b es la intersección con el eje y.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Polinomio Cuadrático (ax^2 + bx + c)",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "a*x**2 + b*x + c"),
+            mostrar_instrucciones("a, b, c", "a*x**2 + b*x + c: Polinomio cuadrático con coeficientes a, b y c.")
+        ]
+    )
+
+    funciones_menu.add_command(
+        label="Polinomio Cúbico (ax^3 + bx^2 + cx + d)",
+        command=lambda: [
+            insertar_funcion(funcion_entry, "a*x**3 + b*x**2 + c*x + d"),
+            mostrar_instrucciones("a, b, c, d", "a*x**3 + b*x**2 + c*x + d: Polinomio cúbico con coeficientes a, b, c y d.")
+        ]
+    )
     # Crear las pestañas de botones
     notebook = ttk.Notebook(frame_entrada)
     notebook.grid(row=3, column=0, padx=5, pady=(10, 5), sticky='nsew')
@@ -117,7 +212,6 @@ def abrir_ventana_graficar(ventana):
 
     tab_resistencias = crear_tab_resistencias(notebook)
     notebook.add(tab_resistencias, text="Resistencias")
-
 
     # Ajustar el grid
     frame_entrada.grid_rowconfigure(3, weight=1)
