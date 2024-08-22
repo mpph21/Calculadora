@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import ttk, font, Menu, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
-from model.funciones_graficar import graficar_funcion_boton, insertar_ecuacion_circulo, on_click, graficar_funcion
+from model.funciones_graficar import graficar_funcion_boton, insertar_ecuacion_circulo, on_click, graficar_funcion, borrar_puntos
 from view.botones_graficar import crear_pestana_botones, botones_basicos, botones_trigo, botones_log, botones_calculo, botones_varios, ModernButton
-from modelview.graficador_resistencias import crear_tab_resistencias
+from view.graficador_resistencias import crear_tab_resistencias
 from modelview.manejarVentana import window_manager
 
 def insertar_funcion(entry, funcion):
@@ -69,11 +69,8 @@ def abrir_ventana_graficar(ventana):
     # Botón para graficar la función
     ModernButton(frame_entrada, text="Graficar Función", command=lambda: graficar_funcion_boton(funcion_entry, ax, canvas, fig, coordenadas_widget), font=button_font).grid(row=2, column=0, padx=5, pady=(0, 10), sticky='ew')
 
-    # Botón para subir gráfica a la base de datos
-    #ModernButton(frame_coordenadas, text="Subir Gráfica a Base de Datos", font=button_font, command=lambda: subir_grafica_base_datos()).pack(pady=10)
-
     # Botón para borrar puntos
-    ModernButton(frame_coordenadas, text="Borrar Puntos", font=button_font, command=lambda: coordenadas_widget.delete('1.0', tk.END)).pack(pady=10)
+    ModernButton(frame_coordenadas, text="Borrar Puntos", font=button_font, command=lambda: borrar_puntos(ax, canvas, coordenadas_widget)).pack(pady=10)    
 
     # Configuración del menú
     menu_bar = Menu(ventana_graficar)

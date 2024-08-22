@@ -50,7 +50,24 @@ def on_click(event, ax, canvas, coordenadas_widget):
             else:
                 # Si la distancia es grande, considerar este como un nuevo primer clic
                 ultimo_click = (x2, y2)
-                
+
+def borrar_puntos(ax, canvas, coordenadas_widget):
+    # Limpiar el widget de coordenadas
+    coordenadas_widget.config(state=tk.NORMAL)
+    coordenadas_widget.delete('1.0', tk.END)
+    coordenadas_widget.config(state=tk.DISABLED)
+
+    # Eliminar los puntos de la gráfica
+    ax.clear()
+    
+    # Redibujar la gráfica en blanco
+    canvas.draw()
+
+    # Reiniciar el contador de puntos y el último clic
+    global num_puntos, ultimo_click
+    num_puntos = 0
+    ultimo_click = None
+            
 
 def graficar_funcion(funcion_entry, ax, canvas, fig):
     ax.clear()

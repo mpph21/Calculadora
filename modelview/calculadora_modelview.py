@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from model.funciones import (suma, resta, multiplicacion, division, potencia)
+from model.historial import agregar_al_historial
 
 class CalculadoraModelView:
     def __init__(self):
