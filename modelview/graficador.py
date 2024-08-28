@@ -47,8 +47,6 @@ def crear_tab_historial(notebook, funcion_entry):
 
     return frame_historial
 
-
-
 def abrir_ventana_graficar(ventana):
     ventana_graficar = tk.Toplevel(ventana)
     ventana_graficar.title("Graficador Avanzado")
@@ -271,7 +269,7 @@ def guardar_ecuacion_y_mostrar(funcion_entry, historial_texto):
         return
 
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    resultado = f"Gráfica de {ecuacion}"  # Aquí defines cómo mostrar el resultado, puedes ajustarlo según necesites
+    resultado = f"{ecuacion}"  
     
     try:
         agregar_a_historial_graficas(ecuacion, resultado)

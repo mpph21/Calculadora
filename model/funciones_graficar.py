@@ -71,13 +71,13 @@ def borrar_puntos(ax, canvas, coordenadas_widget):
 
 def graficar_funcion(funcion_entry, ax, canvas, fig):
     ax.clear()
-    x_vals = np.linspace(-10, 10, 400)  # Reducido para simplificar
+    
+    x_vals = np.linspace(-10, 10, 400)  # Rango de x
     x = sp.symbols('x')
     
     funcion = funcion_entry.get()  # Obtener la función desde la entrada
     
     try:
-        # Definir una función lambda para manejar errores en el cálculo
         def safe_lambdify(expr):
             try:
                 f_lambdified = sp.lambdify(x, expr, modules=['numpy', 'sympy'])
@@ -139,9 +139,13 @@ def graficar_funcion(funcion_entry, ax, canvas, fig):
             if f_lambdified:
                 y_vals = f_lambdified(x_vals)
         
-        # Verificar que x_vals y y_vals tienen la misma longitud
-        if len(x_vals) != len(y_vals):
-            raise ValueError("x_vals y y_vals deben tener la misma longitud.")
+        # Manejo específico para la función tangente
+        if 'tan(' in funcion:
+            # Filtrar los valores de x para evitar discontinuidades
+            x_vals = np.linspace(-10, 10, 1000)
+            y_vals = np.tan(x_vals)
+            # Reemplazar valores infinitos por NaN
+            y_vals[np.abs(y_vals) > 10] = np.nan
         
         # Graficar la función si no es circunferencia
         if '=' not in funcion or 'y' not in funcion:
@@ -151,7 +155,6 @@ def graficar_funcion(funcion_entry, ax, canvas, fig):
         x_min, x_max = x_vals.min(), x_vals.max()
         y_min, y_max = np.nanmin(y_vals), np.nanmax(y_vals)
         
-        # Añadir un margen a los límites de y para mejorar la visualización
         y_range = y_max - y_min
         y_buffer = 0.1 * y_range if y_range != 0 else 1  # Evitar división por cero
         
@@ -180,7 +183,6 @@ def graficar_funcion(funcion_entry, ax, canvas, fig):
         ax.set_facecolor('white')
         plt.tight_layout()
         canvas.draw()
-
 
 def graficar_funcion_boton(funcion_entry, ax, canvas, fig, coordenadas_widget):
     try:
