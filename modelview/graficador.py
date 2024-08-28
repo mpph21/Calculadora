@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 from model.funciones_graficar import graficar_funcion_boton, insertar_ecuacion_circulo, on_click, graficar_funcion, borrar_puntos
 from view.botones_graficar import crear_pestana_botones, botones_basicos, botones_trigo, botones_log, botones_calculo, botones_varios, ModernButton
 from view.graficador_resistencias import crear_tab_resistencias
-from modelview.manejarVentana import window_manager
+from modelview.manejarVentana import WindowManager
+from model.historialGraficas import agregar_a_historial_graficas, borrar_historial_graficas, cargar_historial
+from datetime import datetime
 
 def insertar_funcion(entry, funcion):
     entry.delete(0, tk.END)
@@ -14,6 +16,37 @@ def insertar_funcion(entry, funcion):
 def mostrar_instrucciones(terminos, funcion):
     messagebox.showinfo("Instrucciones",
                        f"Cambia los siguientes términos:\n{terminos}\nen la función: {funcion}")
+    
+def crear_tab_historial(notebook, funcion_entry):
+    # Crear el frame para el historial
+    frame_historial = tk.Frame(notebook, bg='#2E2E2E')
+
+    # Crear un widget de texto para mostrar el historial
+    historial_texto = tk.Text(frame_historial, height=20, width=50, font=font.Font(family="Times New Roman", size=12), bg="#4A4A4A", fg="white", insertbackground='white')
+    historial_texto.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=(10, 5))
+
+    # Crear un frame para los botones de borrar y guardar
+    frame_botones = tk.Frame(frame_historial, bg='#2E2E2E')
+    frame_botones.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+
+    # Botón para borrar el historial
+    boton_borrar = tk.Button(
+    frame_botones, 
+    text="Borrar", 
+    font=font.Font(family="Times New Roman", size=14, weight="bold"), 
+    command=lambda: borrar_historial_graficas(historial_texto)
+    )
+    boton_borrar.pack(side=tk.LEFT, padx=(0, 10))
+
+    # Botón para guardar el historial
+    boton_guardar = tk.Button(frame_botones, text="Guardar", font=font.Font(family="Times New Roman", size=14, weight="bold"), command=lambda: guardar_ecuacion_y_mostrar(funcion_entry, historial_texto))
+    boton_guardar.pack(side=tk.RIGHT, padx=(10, 0))
+
+    # Cargar el historial de la base de datos y mostrarlo en el widget de texto
+    cargar_historial(historial_texto)
+
+    return frame_historial
+
 
 
 def abrir_ventana_graficar(ventana):
@@ -210,6 +243,10 @@ def abrir_ventana_graficar(ventana):
     tab_resistencias = crear_tab_resistencias(notebook)
     notebook.add(tab_resistencias, text="Resistencias")
 
+    # Asegúrate de pasar funcion_entry a crear_tab_historial
+    tab_historial = crear_tab_historial(notebook, funcion_entry)
+    notebook.add(tab_historial, text="Historial")
+
     # Ajustar el grid
     frame_entrada.grid_rowconfigure(3, weight=1)
     frame_entrada.grid_columnconfigure(0, weight=1)
@@ -218,3 +255,30 @@ def abrir_ventana_graficar(ventana):
     funcion_entry.bind("<KeyRelease>", lambda event: graficar_funcion(funcion_entry, ax, canvas, fig))
 
     return ventana_graficar
+
+# Conjunto para rastrear ecuaciones ya guardadas
+ecuaciones_guardadas = set()
+
+def guardar_ecuacion_y_mostrar(funcion_entry, historial_texto):
+    ecuacion = funcion_entry.get().strip()
+    
+    if not ecuacion:
+        messagebox.showwarning("Advertencia", "El campo de entrada está vacío. No se puede guardar.")
+        return
+    
+    if ecuacion in ecuaciones_guardadas:
+        messagebox.showinfo("Información", "La ecuación ya ha sido guardada.")
+        return
+
+    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    resultado = f"Gráfica de {ecuacion}"  # Aquí defines cómo mostrar el resultado, puedes ajustarlo según necesites
+    
+    try:
+        agregar_a_historial_graficas(ecuacion, resultado)
+        ecuaciones_guardadas.add(ecuacion)  # Añade la ecuación al conjunto de ecuaciones guardadas
+        messagebox.showinfo("Éxito", "Ecuación guardada exitosamente.")
+    except Exception as e:
+        messagebox.showerror("Error", f"Error al guardar la ecuación y mostrar el historial: {e}")
+
+    # Actualiza el historial en la interfaz
+    cargar_historial(historial_texto)

@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from datetime import datetime
+import tkinter as tk
 
 historial = []  # Inicializa una lista vacía para almacenar el historial de cálculos localmente
 
